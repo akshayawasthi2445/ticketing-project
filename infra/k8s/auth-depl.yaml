@@ -15,9 +15,9 @@ spec:
       containers:
         - name: auth
           image: akshayawasthi2445/auth
----
+--- 
 apiVersion: v1
-kind: Service
+kind: Service 
 metadata:
   name: auth-srv
 spec:
