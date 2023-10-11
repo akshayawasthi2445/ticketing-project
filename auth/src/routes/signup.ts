@@ -1,8 +1,10 @@
 import express, {Request,Response} from 'express';
-import { body, validationResult } from 'express-validator';
+import { Result, ValidationError, body, validationResult } from 'express-validator';
 const router = express.Router();
+import { DatabaseConnectionError } from '../errors/database-connection-error';
+import { RequestValidationError } from '../errors/request-validation-error';
 
-router.post('api/users/signup',[
+router.post('/api/users/signup',[
     body('email')
     .isEmail()
     .withMessage('email must be validated'),
@@ -10,11 +12,12 @@ router.post('api/users/signup',[
     .trim()
     .isLength({min:4, max: 20})
     .withMessage('Password must be 4 and 20 characters long')],(req: Request,res: Response)=>{
-        const result = validationResult(req);
-        if(result.isEmpty()){
-            res.send(`Error Generated ${result}`);
+        const errors = validationResult(req);
+        if(!errors.isEmpty()){
+            throw new RequestValidationError(errors.array());
         }
-        res.send('In the signup middleware post successful validation check....');
+
+        throw new DatabaseConnectionError('Database is down currently, Please try again later');
 });
 
 export {router as signupRouter};
